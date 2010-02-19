@@ -1,0 +1,42 @@
+#!/usr/bin/env perl
+use Moose;
+use Encode qw(decode);
+use MediaWiki::USERINFO;
+use namespace::clean -except => 'meta';
+
+# Nothing to see here
+__PACKAGE__->meta->make_immutable;
+
+# use utf8 everywhere
+$_ = decode('utf8', $_) for @ARGV;
+binmode $_, ':encoding(utf8)' for (*STDIN, *STDOUT, *STDERR);
+
+# Show help if run without arguments
+@ARGV = qw(--help) unless @ARGV;
+
+MediaWiki::USERINFO->new_with_options->run;
+
+=encoding utf8
+
+=head1 NAME
+
+mediawiki-userinfo - Command-line interface to the L<MediaWiki::USERINFO> module
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+See the documentation for L<MediaWiki::USERINFO> for more information.
+
+=head1 AUTHOR
+
+E<AElig>var ArnfjE<ouml>rE<eth> Bjarmason <avar@cpan.org>
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2010 E<AElig>var ArnfjE<ouml>rE<eth> Bjarmason <avar@cpan.org>
+
+This program is free software, you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
