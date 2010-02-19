@@ -19,6 +19,7 @@ my $ui = MediaWiki::USERINFO->new(
 my @all_users = uniq($ui->users, git_users());
 my $num_users = @all_users;
 my $ok_users  = $num_users;
+my %no;
 
 pass("Going to test $num_users users: @all_users");
 
@@ -28,6 +29,7 @@ for my $u (@all_users) {
 
     unless ($v) {
         $ok_users--;
+        push @{ $no{anything} } => $u;
         skip "Can't find data for user $u, skipping tests", 2;
         next;
     }
@@ -43,6 +45,7 @@ for my $u (@all_users) {
     if ($name) {
         is_sane_utf8($name, "User $user has a sane UTF-8 name ($name)");
     } else {
+        push @{ $no{name} } => $user;
         fail("User $user has no realname in USERINFO");
         $tests_ok = 0;
     }
@@ -54,6 +57,7 @@ for my $u (@all_users) {
         $email_printable =~ s/\./ <dot> /g;
         ok($email_ok, "$user: E-Mail address '$email_printable' is valid");
     } else {
+        push @{ $no{email} } => $user;
         fail("$user: Has no E-Mail address");
         $tests_ok = 0;
     }
@@ -62,6 +66,9 @@ for my $u (@all_users) {
   }
 }
 
+fail("These existing users had no name=: @{$no{name}}") if @{$no{name} || [] };
+fail("These existing users had no email=: @{$no{email}}") if @{$no{email} || [] };
+fail("These existing users had no info of any kind: @{$no{anything}}") if @{$no{anything} || []};
 fail("Only $ok_users / $num_users users have valid USERINFO") if $ok_users != $num_users;
 
 
