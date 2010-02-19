@@ -5,13 +5,13 @@ use Moose;
 use MooseX::StrictConstructor;
 use MooseX::Types::Moose qw<Bool Str ArrayRef HashRef>;
 use File::Slurp;
-use YAML::XS qw(Load Dump);
+use YAML::Syck qw(Load Dump);
+BEGIN { $YAML::Syck::ImplicitUnicode = 1 }
 use File::Temp qw(tempdir);
 use File::Spec::Functions qw(catfile catdir);
 use MediaWiki::USERINFO::User;
 use List::MoreUtils qw(firstval);
 use namespace::clean -except => 'meta';
-use Data::Dump 'dump';
 
 our $VERSION = '0.01';
 
@@ -69,8 +69,6 @@ sub _build_users_data {
         my $file = catfile($self->userinfo, $user);
         my $data = $self->_parse_userinfo($file);
 
-        say Dump($data) if $user eq 'avar';
-
         $users{$user} = MediaWiki::USERINFO::User->new(
             user => $user,
             data => $data,
@@ -120,15 +118,19 @@ sub run {
     }
 
     if (my $name = $self->print_user_info) {
-        my $user = $self->find_user($name);
-        my %info = (
-            user => $user->user,
-            name => $user->name,
-            email => $user->email,
-            aliases => [ $user->aliases ],
-        );
-
-        print Dump(\%info); 
+        if (my $user = $self->find_user($name)) {
+            my %info = (
+                user => $user->user,
+                name => $user->name,
+                email => $user->email,
+                aliases => [ $user->aliases ],
+            );
+            
+            print Dump(\%info); 
+            return;
+        } else {
+            say STDERR "Can't find user $name";
+        }
     }
 }
 
@@ -143,17 +145,8 @@ sub _read_file {
 sub _parse_userinfo {
     my ($self, $file) = @_;
     my $cont = $self->_read_file($file);
-    say $cont if $cont =~ /avar/;
-    my %ret;
-
-    for my $line (split /\n/, $cont) {
-        if ($line =~ m[ ^ (?<key> .*?) : \s+ (?<val>.*?) $ ]x) {
-            Encode::_utf8_on($+{val});
-            $ret{ $+{key} } = $+{val};
-        }
-    }
-
-    return \%ret;
+    my $ret = Load($cont);
+    return $ret;
 }
 
 
