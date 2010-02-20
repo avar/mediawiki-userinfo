@@ -222,8 +222,8 @@ PROGRAM
     $str .= <<"PROGRAM";
 }
 
-\$ENV{GIT_COMMITER_NAME}  = \$an;
-\$ENV{GIT_COMMITER_EMAIL} = \$am;
+\$ENV{GIT_COMMITER_NAME}  = \$an if \$an;
+\$ENV{GIT_COMMITER_EMAIL} = \$am if \$am;
 PROGRAM
 
     return $str;
