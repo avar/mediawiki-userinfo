@@ -146,6 +146,14 @@ has print_user_info => (
     is            => 'ro',
 );
 
+has print_spew_env_filter => (
+    traits        => [qw(Getopt)],
+    cmd_flag      => 'spew-env-filter',
+    documentation => "Dump a program for use with git filter-branch's --env-filter command",
+    isa           => Bool,
+    is            => 'ro',
+);
+
 sub run {
     my ($self) = @_;
 
@@ -169,6 +177,56 @@ sub run {
             say STDERR "Can't find user $name";
         }
     }
+
+    if ($self->print_spew_env_filter) {
+        say $self->get_filter_program;
+    }
+}
+
+sub get_filter_program {
+    my ($self) = @_;
+
+    my @all_users = $self->all_users;
+    my $str;
+
+    $str .= <<"PROGRAM";
+use 5.10.0;
+use utf8;
+use strict;
+
+
+my \$an = \$ENV{GIT_AUTHOR_NAME\};
+my \$am;
+
+given (\$an) {
+PROGRAM
+
+    for my $u (@all_users) {
+        my $v = $self->find_user($u);
+
+        next unless $v;
+
+        my $user  = $v->user;
+        my $name  = $v->name  // $user;
+        my $email = $v->email // '';
+
+        $str .= <<"PROGRAM"
+    when (q[$u]) {
+        \$an = q[$name];
+        \$am = q[$email]
+    }
+PROGRAM
+    }
+
+    $str .= <<"PROGRAM";
+}
+
+\$ENV{GIT_AUTHOR_NAME}  = \$an;
+\$ENV{GIT_AUTHOR_EMAIL} = \$am;
+PROGRAM
+
+    return $str;
+    
 }
 
 sub _read_file {
