@@ -196,7 +196,7 @@ use utf8;
 use strict;
 
 
-my \$an = \$ENV{GIT_AUTHOR_NAME\};
+my \$an = \$ENV{GIT_COMMITER_NAME\};
 my \$am;
 
 given (\$an) {
@@ -222,8 +222,8 @@ PROGRAM
     $str .= <<"PROGRAM";
 }
 
-\$ENV{GIT_AUTHOR_NAME}  = \$an;
-\$ENV{GIT_AUTHOR_EMAIL} = \$am;
+\$ENV{GIT_COMMITER_NAME}  = \$an;
+\$ENV{GIT_COMMITER_EMAIL} = \$am;
 PROGRAM
 
     return $str;
