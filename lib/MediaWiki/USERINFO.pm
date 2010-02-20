@@ -190,6 +190,7 @@ sub get_filter_program {
     my $str;
 
     $str .= <<"PROGRAM";
+#!/usr/bin/env perl
 use 5.10.0;
 use utf8;
 use strict;
