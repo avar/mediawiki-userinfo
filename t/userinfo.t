@@ -12,11 +12,12 @@ use Test::utf8;
 
 my $ui = MediaWiki::USERINFO->new(
     ($ENV{USER} eq 'avar'
-     ? (userinfo => '/home/avar/src/mw/USERINFO')
+     ? (userinfo_dir => '/home/avar/src/mw/USERINFO')
      : ()),
+    all_commiters => catfile(qw(t data git-users.txt)),
 );
 
-my @all_users = uniq($ui->users, git_users());
+my @all_users = $ui->all_users;
 my $num_users = @all_users;
 my $ok_users  = $num_users;
 my %no;
@@ -70,14 +71,3 @@ fail("These existing users had no name=: @{$no{name}}") if @{$no{name} || [] };
 fail("These existing users had no email=: @{$no{email}}") if @{$no{email} || [] };
 fail("These existing users had no info of any kind: @{$no{anything}}") if @{$no{anything} || []};
 fail("Only $ok_users / $num_users users have valid USERINFO") if $ok_users != $num_users;
-
-
-# Produced with `git log --pretty=format:%an | sort | uniq > git-users.txt'
-sub git_users {
-    my $file = catfile(qw(t data git-users.txt));
-
-    chomp(my @users = read_file($file));
-
-    return @users;
-}
-

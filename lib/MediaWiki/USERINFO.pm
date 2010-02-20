@@ -10,14 +10,14 @@ BEGIN { $YAML::Syck::ImplicitUnicode = 1 }
 use File::Temp qw(tempdir);
 use File::Spec::Functions qw(catfile catdir);
 use MediaWiki::USERINFO::User;
-use List::MoreUtils qw(firstval);
+use List::MoreUtils qw(firstval uniq);
 use namespace::clean -except => 'meta';
 
 our $VERSION = '0.01';
 
 with 'MooseX::Getopt::Dashes';
 
-has userinfo => (
+has userinfo_dir => (
     isa => Str,
     is => 'ro',
     lazy_build => 1,
@@ -33,6 +33,29 @@ sub _build_userinfo {
     return $tmpdir;
 }
 
+has all_commiters => (
+    isa => Str,
+    is => 'ro',
+    documentation => "Path to a file produced with `git log --pretty=format:%an | sort | uniq'",
+);
+
+has all_commiters_data => (
+    traits => [ qw(NoGetopt) ],
+    isa => ArrayRef,
+    is => 'ro',
+    auto_deref => 1,
+    lazy_build => 1,
+);
+
+sub _build_all_commiters_data {
+    my ($self) = @_;
+    my $file = $self->all_commiters;
+
+    chomp(my @users = read_file($file));
+
+    return \@users;
+}
+
 has users => (
     traits => [ qw(NoGetopt) ],
     isa => ArrayRef,
@@ -44,11 +67,25 @@ has users => (
 sub _build_users {
     my ($self) = @_;
 
-    opendir my $dir, $self->userinfo;
-    my @users = sort { $a cmp $b } grep { -f catfile($self->userinfo, $_) } readdir $dir;
+    opendir my $dir, $self->userinfo_dir;
+    my @users = sort { $a cmp $b } grep { -f catfile($self->userinfo_dir, $_) } readdir $dir;
     closedir $dir;
 
     return \@users;
+}
+
+has all_users => (
+    traits => [ qw(NoGetopt) ],
+    isa => ArrayRef,
+    is => 'ro',
+    auto_deref => 1,
+    lazy_build => 1,
+);
+
+sub _build_all_users {
+    my ($self) = @_;
+
+    return [ uniq($self->users, $self->all_commiters_data) ];
 }
 
 has users_data => (
@@ -66,7 +103,7 @@ sub _build_users_data {
     my %users;
 
     for my $user (@users) {
-        my $file = catfile($self->userinfo, $user);
+        my $file = catfile($self->userinfo_dir, $user);
         my $data = $self->_parse_userinfo($file);
 
         $users{$user} = MediaWiki::USERINFO::User->new(
