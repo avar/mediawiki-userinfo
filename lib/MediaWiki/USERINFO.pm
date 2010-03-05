@@ -24,7 +24,7 @@ has userinfo_dir => (
     documentation => 'Path to MediaWiki USERINFO directory. Default: Check it out from svn to temporary directory ',
 );
 
-sub _build_userinfo {
+sub _build_userinfo_dir {
     my ($self) = @_;
 
     my $tmpdir = tempdir( CLEANUP => 1 );
