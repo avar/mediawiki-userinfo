@@ -11,7 +11,7 @@ use File::Slurp;
 use Test::utf8;
 
 my $ui = MediaWiki::USERINFO->new(
-    ($ENV{USER} eq 'avar'
+    (($ENV{USER} eq 'avar' and -d '/home/avar/src/mw/USERINFO')
      ? (userinfo_dir => '/home/avar/src/mw/USERINFO')
      : ()),
     all_commiters => catfile(qw(t data git-users.txt)),
@@ -40,7 +40,7 @@ for my $u (@all_users) {
     my $email = $v->email;
 
     pass "Testing user $u (canonical name: $user)";
-    
+
     my $tests_ok = 1;
 
     if ($name) {
