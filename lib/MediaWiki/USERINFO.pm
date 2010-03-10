@@ -13,8 +13,6 @@ use MediaWiki::USERINFO::User;
 use List::MoreUtils qw(firstval uniq);
 use namespace::clean -except => 'meta';
 
-our $VERSION = '0.01';
-
 with 'MooseX::Getopt::Dashes';
 
 has userinfo_dir => (
@@ -268,7 +266,7 @@ This module can generate a program to be used with C<git filter-branch
 --env-filter> to rename svn users in a C<git svn> generated MediaWiki
 repository to real names/email pairs.
 
-=head1 AUTHORS
+=head1 AUTHOR
 
 E<AElig>var ArnfjE<ouml>rE<eth> Bjarmason <avar@cpan.org>
 

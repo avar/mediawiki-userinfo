@@ -5,8 +5,6 @@ use MooseX::StrictConstructor;
 use MooseX::Types::Moose qw<Str HashRef ArrayRef>;
 use namespace::clean -except => 'meta';
 
-our $VERSION = '0.01';
-
 has user => (
     isa => Str,
     is => 'ro',
@@ -74,3 +72,20 @@ sub email {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+=head1 NAME
+
+MediaWiki::USERINFO::User - An object representing a single L<MediaWiki::USERINFO> user
+
+=head1 AUTHOR
+
+E<AElig>var ArnfjE<ouml>rE<eth> Bjarmason <avar@cpan.org>
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2010 E<AElig>var ArnfjE<ouml>rE<eth> Bjarmason <avar@cpan.org>
+
+This program is free software, you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
