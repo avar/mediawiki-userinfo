@@ -1,4 +1,6 @@
 Revision history for MediaWiki::USERINFO
 
 {{$NEXT}}
+
+0.01 2010-03-10 15:23:32
     - Initial CPAN release
