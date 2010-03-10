@@ -245,5 +245,38 @@ sub _parse_userinfo {
     return $ret;
 }
 
-
 __PACKAGE__->meta->make_immutable;
+
+=head1 NAME
+
+MediaWiki::USERINFO - Parse the F<USERINFO/> files in MediaWiki's Subversion repository
+
+=head1 DESCRIPTION
+
+MediaWiki's subversion repository contains a
+L<USERINFO|http://svn.wikimedia.org/svnroot/mediawiki/USERINFO/>
+directory. This module knows how to parse files therein, look up
+usernames (or aliases), de-obfuscate the C<email:> field in the
+USERINFO files and more.
+
+See the F<t/userinfo.t> test file in the distribution for what it can
+do. This module was mainly written to find out what users were missing
+USERINFO files (or essential fields) for the proposed MediaWiki -> Git
+conversion.
+
+This module can generate a program to be used with C<git filter-branch
+--env-filter> to rename svn users in a C<git svn> generated MediaWiki
+repository to real names/email pairs.
+
+=head1 AUTHORS
+
+E<AElig>var ArnfjE<ouml>rE<eth> Bjarmason <avar@cpan.org>
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2010 E<AElig>var ArnfjE<ouml>rE<eth> Bjarmason <avar@cpan.org>
+
+This program is free software, you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
