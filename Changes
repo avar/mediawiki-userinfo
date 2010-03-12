@@ -2,9 +2,10 @@ Revision history for MediaWiki::USERINFO
 
 {{$NEXT}}
 
-0.02 2010-03-12 03:58:15
+0.03 2010-03-12 18:49:14
+    - Use Dist::Zilla::PluginBundle::AVAR
 
-0.01 2010-03-12 03:56:13
+0.02 2010-03-12 03:58:15
     - Add dependency on IPC::System::Simple due to autodie needing it
 
 0.01 2010-03-10 15:23:32
