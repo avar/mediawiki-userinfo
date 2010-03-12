@@ -2,6 +2,8 @@ Revision history for MediaWiki::USERINFO
 
 {{$NEXT}}
 
+0.02 2010-03-12 03:58:15
+
 0.01 2010-03-12 03:56:13
     - Add dependency on IPC::System::Simple due to autodie needing it
 
